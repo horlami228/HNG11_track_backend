@@ -26,7 +26,7 @@ data_api = {
         "slack_name": "example_name",
         "current_day": day,
         "utc_time": time,
-        "track": "specialization",
+        "track": "backend",
         "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
         "status_code": 200
@@ -36,8 +36,7 @@ data_api = {
 @app.route("/", methods=["GET"])
 def home_page():
 
-    json_file = json.dumps(data_api)
-    return json_file
+    return jsonify(data_api)
 
 
 @app.route("/api/", methods=["GET"])
@@ -51,8 +50,7 @@ def api():
     if track:
         data_api["track"] = track
         
-    json_file = json.dumps(data_api)
-    return json_file
+    return jsonify(data_api)
 
 
 if __name__ == "__main__":
