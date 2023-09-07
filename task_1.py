@@ -24,23 +24,21 @@ else:
 
 @app.route("/", methods=["GET"])
 def home_page():
-
-    query_string = ["slack_name", "track"]
+    # get request query
+    slack_name = request.args.get("slack_name")
+    track = request.args.get("track")
+    
     data_api = {
-        "slack_name": " ",
+        "slack_name": f"{slack_name}",
         "current_day": current_UTC_time.strftime("%A"),
         "utc_time": current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "track": " ",
+        "track": f"{track}",
         "github_file_url": "https://github.com/horlami228/HNGx_track_backend\
             /blob/master/task_1.py",
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
         "status_code": 200
     }
 
-    for param_name in query_string:
-        param_value = request.args.get(param_name)
-        if param_value is not None:
-            data_api[param_name] = param_value
     json_file = json.dumps(data_api)
     return json_file
 
