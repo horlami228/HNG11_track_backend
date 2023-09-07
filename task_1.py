@@ -19,7 +19,7 @@ if lower <= current_UTC_time and current_UTC_time <= higher:
 else:
     exit(98)
 
-time = current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+time = current_UTC_time.isoformat()[:-7]
 day = current_UTC_time.strftime("%A")
 
 data_api = {
@@ -53,5 +53,5 @@ def api():
     return jsonify(data_api)
 
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0")
