@@ -23,6 +23,24 @@ else:
 
 @app.route("/", methods=["GET"])
 def home_page():
+
+    data_api = {
+        "slack_name": "example_name",
+        "current_day": current_UTC_time.strftime("%A"),
+        "utc_time": current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "track": "specialization",
+        "github_file_url": "https://github.com/horlami228/HNGx_track_backend\
+            /blob/master/task_1.py",
+        "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
+        "status_code": 200
+    }
+
+    json_file = json.dumps(data_api)
+    return json_file, data_api["status_code"]
+
+
+@app.route("api", methods=["GET"])
+def api():
     # get request query
     slack_name = request.args.get("slack_name")
     track = request.args.get("track")
