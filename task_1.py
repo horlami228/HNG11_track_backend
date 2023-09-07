@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from flask import *
 import json
 from datetime import datetime, timedelta
