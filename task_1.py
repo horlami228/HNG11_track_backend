@@ -19,20 +19,22 @@ if lower <= current_UTC_time and current_UTC_time <= higher:
 else:
     exit(98)
 
+time = current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+day = current_UTC_time.strftime("%A")
 
-@app.route("/", methods=["GET"])
-def home_page():
-
-    data_api = {
+data_api = {
         "slack_name": "example_name",
-        "current_day": current_UTC_time.strftime("%A"),
-        "utc_time": current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "current_day": day,
+        "utc_time": time,
         "track": "specialization",
-        "github_file_url": "https://github.com/horlami228/HNGx_track_backend\
-            /blob/master/task_1.py",
+        "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
         "status_code": 200
     }
+
+
+@app.route("/", methods=["GET"])
+def home_page():
 
     json_file = json.dumps(data_api)
     return json_file
@@ -44,16 +46,11 @@ def api():
     slack_name = request.args.get("slack_name")
     track = request.args.get("track")
 
-    data_api = {
-        "slack_name": f"{slack_name}",
-        "current_day": current_UTC_time.strftime("%A"),
-        "utc_time": current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "track": f"{track}",
-        "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
-        "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
-        "status_code": 200
-    }
-
+    if slack_name:
+        data_api["slack_name"] = slack_name
+    if track:
+        data_api["track"] = track
+        
     json_file = json.dumps(data_api)
     return json_file
 
