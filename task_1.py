@@ -39,7 +39,7 @@ def home_page():
     return json_file, data_api["status_code"]
 
 
-@app.route("api", methods=["GET"])
+@app.route("/api", methods=["GET"])
 def api():
     # get request query
     slack_name = request.args.get("slack_name")
