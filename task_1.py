@@ -26,7 +26,7 @@ def home_page():
     # get request query
     slack_name = request.args.get("slack_name")
     track = request.args.get("track")
-    
+
     data_api = {
         "slack_name": f"{slack_name}",
         "current_day": current_UTC_time.strftime("%A"),
