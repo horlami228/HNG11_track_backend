@@ -16,13 +16,13 @@ if lower <= current_UTC_time and current_UTC_time <= higher:
 else:
     status_code = 400
 
-time = current_UTC_time.isoformat()[:-7] + 'Z'
-day = current_UTC_time.strftime("%A")
-
 
 
 @app.route("/", methods=["GET"])
 def home_page():
+    time = current_UTC_time.isoformat()[:-7] + 'Z'
+    day = current_UTC_time.strftime("%A")
+
     data_api = {
         "slack_name": "",
         "current_day": day,
@@ -38,6 +38,9 @@ def home_page():
 
 @app.route("/api/", methods=["GET"])
 def api():
+    time = current_UTC_time.isoformat()[:-7] + 'Z'
+    day = current_UTC_time.strftime("%A")
+
     data_api = {
         "slack_name": "",
         "current_day": day,
