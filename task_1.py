@@ -1,6 +1,5 @@
 from flask import *
 from datetime import datetime, timedelta
-import pytz
 
 app = Flask(__name__)
 app.json.sort_keys = False
