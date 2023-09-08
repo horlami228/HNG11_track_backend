@@ -15,13 +15,10 @@ if lower <= current_UTC_time and current_UTC_time <= higher:
 else:
     status_code = 400
 
-time = current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-day = current_UTC_time.strftime("%A")
-
 data_api = {
         "slack_name": "",
-        "current_day": day,
-        "utc_time": time,
+        "current_day": datetime.utcnow().strftime("%A"),
+        "utc_time": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
         "track": "",
         "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
@@ -50,4 +47,4 @@ def api():
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0")
+    app.run(debug=True)
