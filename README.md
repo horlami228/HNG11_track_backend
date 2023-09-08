@@ -14,3 +14,17 @@ The endpoint should take two GET request query parameters and return specific in
 * The GitHub URL of the file being run
 * The GitHub URL of the full source code
 * A Staus Code of Success
+
+<h3>Result in JSON</h3>
+
+<pre>
+{
+    "current_day": "Friday",
+    "github_file_url": "https://github.com/horlami228/		HNGx_track_backend/blob/master/task_1.py",
+    "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
+    "slack_name": "olamilekan",
+    "status_code": 200,
+    "track": "backend",
+    "utc_time": "2023-09-08T00:50:47Z"
+}
+</pre>
