@@ -20,8 +20,8 @@ day = current_UTC_time.strftime("%A")
 
 data_api = {
         "slack_name": "",
-        "current_day": str(day),
-        "utc_time": str(time),
+        "current_day": day,
+        "utc_time": time,
         "track": "",
         "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
