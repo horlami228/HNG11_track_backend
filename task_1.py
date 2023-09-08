@@ -17,8 +17,8 @@ else:
 
 data_api = {
         "slack_name": "",
-        "current_day": datetime.utcnow().strftime("%A"),
-        "utc_time": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "current_day": current_UTC_time.strftime("%A"),
+        "utc_time": current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "track": "",
         "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
