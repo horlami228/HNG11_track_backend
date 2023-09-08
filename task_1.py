@@ -1,7 +1,9 @@
 from flask import *
 from datetime import datetime, timedelta
+import pytz
 
 app = Flask(__name__)
+app.json.sort_keys = False
 
 # validate the current UTC time(with validation of +/-2)
 current_UTC_time = datetime.utcnow()
@@ -28,7 +30,6 @@ data_api = {
         "status_code": status_code
     }
 
-
 @app.route("/", methods=["GET"])
 def home_page():
 
@@ -51,3 +52,18 @@ def api():
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0")
+
+# # Get the current UTC time
+# current_utc_time = datetime.utcnow()
+
+# # Define the Nigeria time zone
+# nigeria_timezone = pytz.timezone("Africa/Lagos")
+
+# # Convert the current UTC time to the Nigeria time zone
+# lagos_time = current_utc_time.replace(tzinfo=pytz.UTC).astimezone(nigeria_timezone)
+
+# # Format the Lagos time as an ISO 8601 string with "Z" for UTC
+# iso_formatted = lagos_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+# # Print the ISO formatted Lagos time
+# print("Current Lagos Time:", iso_formatted)
