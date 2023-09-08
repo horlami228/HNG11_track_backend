@@ -19,7 +19,11 @@ else:
 time = current_UTC_time.isoformat()[:-7] + 'Z'
 day = current_UTC_time.strftime("%A")
 
-data_api = {
+
+
+@app.route("/", methods=["GET"])
+def home_page():
+    data_api = {
         "slack_name": "",
         "current_day": day,
         "utc_time": time,
@@ -28,15 +32,22 @@ data_api = {
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
         "status_code": status_code
     }
-
-@app.route("/", methods=["GET"])
-def home_page():
-
+    
     return jsonify(data_api)
 
 
 @app.route("/api/", methods=["GET"])
 def api():
+    data_api = {
+        "slack_name": "",
+        "current_day": day,
+        "utc_time": time,
+        "track": "",
+        "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
+        "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
+        "status_code": status_code
+    }  
+    
     # get request query
     slack_name = request.args.get("slack_name", '')
     track = request.args.get("track", '')
@@ -45,12 +56,13 @@ def api():
         data_api["slack_name"] = slack_name
     if track:
         data_api["track"] = track
-        
+    
+
     return jsonify(data_api)
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0")
+    app.run(debug=True)
 
 # # Get the current UTC time
 # current_utc_time = datetime.utcnow()
