@@ -15,7 +15,7 @@ if lower <= current_UTC_time and current_UTC_time <= higher:
 else:
     status_code = 400
 
-time = current_UTC_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+time = current_UTC_time.isoformat()[:-7] + 'Z'
 day = current_UTC_time.strftime("%A")
 
 data_api = {
