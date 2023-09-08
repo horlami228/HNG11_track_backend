@@ -1,5 +1,6 @@
 from flask import *
 from datetime import datetime, timedelta
+import json
 
 app = Flask(__name__)
 app.json.sort_keys = False
@@ -20,13 +21,11 @@ else:
 
 @app.route("/", methods=["GET"])
 def home_page():
-    time = current_UTC_time.isoformat()[:-7] + 'Z'
-    day = current_UTC_time.strftime("%A")
 
     data_api = {
         "slack_name": "",
-        "current_day": day,
-        "utc_time": time,
+        "current_day": datetime.utcnow().strftime('%A'),
+        "utc_time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
         "track": "",
         "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
@@ -38,13 +37,11 @@ def home_page():
 
 @app.route("/api/", methods=["GET"])
 def api():
-    time = current_UTC_time.isoformat()[:-7] + 'Z'
-    day = current_UTC_time.strftime("%A")
 
     data_api = {
         "slack_name": "",
-        "current_day": day,
-        "utc_time": time,
+        "current_day": datetime.utcnow().strftime('%A'),
+        "utc_time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
         "track": "",
         "github_file_url": "https://github.com/horlami228/HNGx_track_backend/blob/master/task_1.py",
         "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
