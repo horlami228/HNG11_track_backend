@@ -1,30 +1,24 @@
-# Backend Stage One Task
+# Stage One Task - Backend Track
 
-## Objective
-Create and host an endpoint using any programming language of your choice.
-The endpoint should take two GET request query parameters and return specific information in JSON format.
+## Task Description
 
-## Requirements
+Set up a basic web server
 
-> The information includes:
-* Slack name
-* Current day of the week
-* Current UTC time (with validation of +/-2)
-* Track
-* The GitHub URL of the file being run
-* The GitHub URL of the full source code
-* A Staus Code of Success
+## Endpoint
 
-<h3>Result in JSON</h3>
+- **Method:** GET
+- **URL:** `<example.com>/api/hello?visitor_name="Mark"`
+  - Replace `<example.com>` with your server's domain or IP address.
 
-<pre>
+## Response Format
+
+The endpoint should respond with a JSON object containing:
+
+```json
 {
-    "current_day": "Friday",
-    "github_file_url": "https://github.com/horlami228/		HNGx_track_backend/blob/master/task_1.py",
-    "github_repo_url": "https://github.com/horlami228/HNGx_track_backend",
-    "slack_name": "olamilekan",
-    "status_code": 200,
-    "track": "backend",
-    "utc_time": "2023-09-08T00:50:47Z"
+  "client_ip": "127.0.0.1", // The IP address of the requester
+  "location": "New York", // The city of the requester
+  "greeting": "Hello, Mark!, the temperature is 11 degrees Celsius in New York"
 }
-</pre>
+```
+
