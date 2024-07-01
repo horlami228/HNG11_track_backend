@@ -11,7 +11,12 @@ const getTemp = async (city: string) => {
 
     console.log("weather response", response);
 
-    return response.data?.main?.temp;
+    const temp = response.data?.main?.temp;
+
+    // temp is in kelvin need to convert to celcius
+
+    const celcius = temp - 273.15;
+    return celcius.toFixed(2);
   } catch (error: any) {
     console.log(error.message);
   }
