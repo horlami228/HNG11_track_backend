@@ -1,13 +1,9 @@
+import "./config.js";
 import express from "express";
 import { Request, Response, NextFunction } from "express";
-import { config } from "dotenv";
-
+import greetingRoute from "./routes/greetingRoute.js";
 // Load the correct .env file based on NODE_ENV
-if (process.env.NODE_ENV === "production") {
-  config({ path: ".env.production" });
-} else {
-  config({ path: ".env.development" });
-}
+// console.log("db_url", process.env.DATABASE_URL);
 const PORT = process.env.PORT || 8000;
 // set default port or use provided PORT env variable
 
@@ -16,6 +12,9 @@ const app = express();
 
 //Enable express to parse JSON data
 app.use(express.json());
+
+// Api endpoints here
+app.use("/api/", greetingRoute);
 
 // 404 error handler middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
