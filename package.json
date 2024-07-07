@@ -9,22 +9,36 @@
     "dev": "npm-run-all --parallel tsc:watch nodemon",
     "tsc:watch": "tsc --watch",
     "nodemon": "nodemon",
-    "start": "cross-env NODE_ENV='production' node ./dist/server.js"
+    "start": "prisma generate && cross-env NODE_ENV='production' node ./dist/server.js",
+    "migrate:dev": "prisma migrate dev --name init",
+    "migrate:deploy": "prisma migrate deploy",
+    "dev:migrate": "prisma migrate dev --name init && prisma generate && npm-run-all --parallel tsc:watch nodemon"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.16.1",
     "axios": "^1.7.2",
+    "bcrypt": "^5.1.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.10.2",
     "nodemon": "^3.1.4",
     "npm-run-all": "^4.1.5",
+    "pg": "^8.12.0",
+    "prisma": "^5.16.1",
     "rimraf": "^5.0.7",
+    "sequelize": "^6.37.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.2",
+    "winston": "^3.13.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21"
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6"
   }
 }
