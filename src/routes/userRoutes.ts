@@ -1,28 +1,67 @@
-import { newUser, login } from "../controllers/userController.js";
+import {
+  getUSer,
+  allOrganisation,
+  getOrg,
+  createOrg,
+  addToOrg,
+} from "../controllers/userController.js";
 import { Router } from "express";
 import validate from "../middleware/validateMiddleware.js";
 import Joi from "joi";
+import { verifyToken } from "../middleware/guardMiddleware.js";
 
 const router = Router();
 
-// Define Joi schema for validating a new user creation
-const createUserSchema = Joi.object({
-  email: Joi.string().email().required(),
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
-  password: Joi.string().min(6).required(),
-  phone: Joi.string().optional(),
-});
-// route to create a new user
-router.post("/register", validate(createUserSchema), newUser);
+// route to get user details
 
-// Define joi schema for login input
-const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().required(),
+// define the joi schema for getUser
+const getSchema = Joi.object({
+  id: Joi.string().uuid().required(),
+});
+router.get("/users/:id", verifyToken, validate(getSchema, "params"), getUSer);
+
+// route to get all organisations
+router.get("/organisations", verifyToken, allOrganisation);
+
+// route to get a single organisation
+const orgSchema = Joi.object({
+  orgId: Joi.string().uuid().required(),
 });
 
-// route to login a user
-router.post("/login", validate(loginSchema), login);
+router.get(
+  "/organisations/:orgId",
+  verifyToken,
+  validate(orgSchema, "params"),
+  getOrg,
+);
+
+// route to create o rganisation
+const createOrgSchema = Joi.object({
+  name: Joi.string().required(),
+  description: Joi.string().optional(),
+});
+
+router.post(
+  "/organisations",
+  verifyToken,
+  validate(createOrgSchema, "body"),
+  createOrg,
+);
+
+// route to add a user to an organisation
+const addOrgSchemaBody = Joi.object({
+  userId: Joi.string().uuid().required(),
+});
+const addOrgSchemaParam = Joi.object({
+  orgId: Joi.string().uuid().required(),
+});
+
+router.post(
+  "/organisations/:orgId/users",
+  verifyToken,
+  validate(addOrgSchemaParam, "params"),
+  validate(addOrgSchemaBody, "body"),
+  addToOrg,
+);
 
 export default router;

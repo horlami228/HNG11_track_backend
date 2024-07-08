@@ -8,6 +8,8 @@ import Organisation from "../models/orgModel.js";
 import UserOrganisation from "../models/userOrgModel.js";
 import generateToken from "../utilities/jwtToken.js";
 import { CustomRequest } from "../types/customRequest.js";
+import { Op } from "sequelize";
+import { QueryTypes } from "sequelize";
 // create a new user
 export const newUser = async (
   req: Request,
@@ -16,7 +18,7 @@ export const newUser = async (
 ) => {
   const { email, firstName, lastName, password, phone } = req.body;
   let dbTransaction: Transaction | undefined;
-
+  let transaction;
   try {
     // hash the user password
     const hashedPassword = await hashPassword(password);
@@ -46,18 +48,20 @@ export const newUser = async (
       },
       { transaction: dbTransaction },
     );
-
     // insert into the association table
+    const { userId } = user;
+    const { orgId } = org;
+
+    console.log("userid", userId, "orgId", orgId);
+
     await UserOrganisation.create(
       {
-        userId: user.userId,
-        orgId: org.orgId,
+        userId,
+        orgId,
       },
       { transaction: dbTransaction },
     );
-
     await dbTransaction.commit();
-
     const token = generateToken(user);
 
     res.status(201).json({
@@ -141,20 +145,284 @@ export const login = async (
   }
 };
 
-const getUSer = async (
+export const getUSer = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction,
 ) => {
-  const user = req?.user;
-  const userId = req.params.id;
+  const loggedInUserId = req?.user.userId;
+  const requestedUserId = req?.params.id;
+  console.log(
+    "loggedInuserID",
+    loggedInUserId,
+    "requesteduserID",
+    requestedUserId,
+  );
+  let data: any = {};
+  try {
+    const requestedUser: any = await User.findOne({
+      where: {
+        userId: requestedUserId,
+      },
+      include: [
+        {
+          model: Organisation,
+          as: "organisations",
+          through: { attributes: [] },
+        },
+      ],
+      attributes: ["userId", "firstName", "lastName", "email", "phone"],
+    });
+    console.log("the requested user is", requestedUser);
+    // if the user is not foundk
+    if (!requestedUser) {
+      const error: any = new Error();
+      (error.customMessage = "User not found"),
+        (error.clientStatus = "failed"),
+        (error.statusCode = 422);
+      return next(error);
+    }
+    // check if the requested user is also the logged in user
+    if (loggedInUserId === requestedUserId) {
+      // return the details
+      const { userId, firstName, lastName, email, phone } = requestedUser;
+      data = { userId, firstName, lastName, email, phone };
+    } else {
+      // not the logged in user
+      // check if the requested user is part of any organisation the loggedin user is
+      const commonOrganisations = await Organisation.findAll({
+        include: [
+          {
+            model: User,
+            as: "users",
+            where: { userId: loggedInUserId },
+            attributes: [],
+            through: { attributes: [] },
+          },
+        ],
+        where: {
+          orgId: {
+            [Op.in]: requestedUser.organisations.map((org: any) => org.orgId),
+          },
+        },
+      });
+
+      // check the length of the object
+      // to know if there is any organisation data there
+      console.log("the organisation", commonOrganisations);
+
+      if (commonOrganisations.length > 0) {
+        const { userId, firstName, lastName, email, phone } = requestedUser;
+        data = { userId, firstName, lastName, email, phone };
+      }
+    }
+
+    if (Object.keys(data).length > 0) {
+      return res.status(200).json({
+        status: "success",
+        message: "Fetched User Details Successfully",
+        data,
+      });
+    } else {
+      const error: any = new Error();
+      error.customMessage = "Not authorized to view this user details";
+      error.clientStatus = "failed";
+      return next(error);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+// get all organisations a user has
+export const allOrganisation = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { userId } = req?.user;
 
   try {
-    const found = await User.findOne({
-      where: { userId: userId },
+    // // get organisations
+    // const user = User.findOne({
+    //   where: {userId: userId},
+    //   include: [{
+    //     model: Organisation,
+    //     as: "organisations"
+    //   }]
+    // })
+    const organisations = await Organisation.findAll({
+      include: [
+        {
+          model: User,
+          as: "users",
+          where: { userId: userId },
+          attributes: [],
+          through: { attributes: [] },
+        },
+      ],
     });
 
-    if (found) {
+    const orgData = organisations.map((org) => {
+      const { orgId, name, description } = org.toJSON();
+      return { orgId, name, description };
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Fetched user organisations successfully",
+      data: {
+        organisation: orgData,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// get single organisation
+export const getOrg = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  // get a single organisation by the id
+  const orgId = req.params?.orgId;
+
+  try {
+    const org = await Organisation.findOne({
+      where: { orgId: orgId },
+      attributes: ["orgId", "name", "description"],
+    });
+
+    if (!org) {
+      const error: any = new Error();
+      error.customMessage = "Organisation not found";
+      error.clientStatus = "failed";
+      return next(error);
     }
-  } catch (error) {}
+
+    res.status(200).json({
+      status: "success",
+      message: "Orginsation retreived successfully",
+      data: org,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// create organisation
+export const createOrg = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { userId } = req?.user;
+  const { name, description } = req.body;
+
+  let dbTransaction: Transaction | undefined;
+
+  try {
+    if (!sequelize) {
+      throw new Error("Sequelize instance is not available");
+    }
+    dbTransaction = await sequelize.transaction();
+
+    // create new organisation
+    const org: any = await Organisation.create(
+      {
+        name,
+        description,
+      },
+      { transaction: dbTransaction },
+    );
+
+    // insert into association table
+    const { orgId } = org;
+    await UserOrganisation.create(
+      {
+        userId: userId,
+        orgId: orgId,
+      },
+      { transaction: dbTransaction },
+    );
+
+    await dbTransaction.commit();
+    res.status(201).json({
+      status: "success",
+      message: "Organisation created successfully",
+      data: {
+        orgId: org.orgId,
+        name: org.name,
+        description: org.description,
+      },
+    });
+  } catch (error: any) {
+    if (dbTransaction) {
+      dbTransaction.rollback();
+    }
+    (error.clientMessage = "Client error"), (error.statusCode = 400);
+    next(error);
+  }
+};
+
+// add a user to a particular organisation
+export const addToOrg = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { userId } = req.body;
+  const { orgId } = req.params;
+
+  let dbTransaction: Transaction | undefined;
+  try {
+    if (!sequelize) {
+      throw new Error("Sequelize instance is not available");
+    }
+    // check if the userId is correct
+
+    const org = await Organisation.findOne({
+      where: { orgId: orgId },
+    });
+    console.log("the org", org);
+    dbTransaction = await sequelize?.transaction();
+    if (!org) {
+      const error: any = new Error();
+      error.customMessage = "Organisation does not exist";
+      error.statusCode = 422;
+      return next(error);
+    }
+    const user = await User.findOne({
+      where: { userId: userId },
+    });
+    console.log("the user for this", user);
+
+    if (!user) {
+      const error: any = new Error();
+      error.customMessage = "User found";
+      error.statusCode = 422;
+      return next(error);
+    }
+
+    // insert the user into the association
+    await UserOrganisation.create(
+      {
+        userId: userId,
+        orgId: orgId,
+      },
+      { transaction: dbTransaction },
+    );
+
+    await dbTransaction.commit();
+
+    res.status(200).json({
+      status: "success",
+      message: "User added to organisation successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
 };

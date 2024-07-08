@@ -1,11 +1,13 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/index.js";
+import Organisation from "./orgModel.js";
+import UserOrganisation from "./userOrgModel.js";
 
 if (!sequelize) {
   throw new Error("Sequelize instance is not available");
 }
 const User = sequelize.define(
-  "User",
+  "users",
   {
     userId: {
       type: DataTypes.UUID,
@@ -37,8 +39,6 @@ const User = sequelize.define(
   },
   {
     timestamps: true,
-    modelName: "User",
-    tableName: "users",
   },
 );
 

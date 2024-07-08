@@ -5,7 +5,7 @@ if (!sequelize) {
   throw new Error("Sequelize instance is not available");
 }
 const Organisation = sequelize?.define(
-  "Organisation",
+  "organisations",
   {
     orgId: {
       type: DataTypes.UUID,
@@ -24,8 +24,6 @@ const Organisation = sequelize?.define(
   },
   {
     timestamps: true,
-    modelName: "Organisation",
-    tableName: "organisations",
   },
 );
 
