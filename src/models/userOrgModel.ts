@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
+import sequelize from "../db/index.js";
 import User from "./userModel.js";
 import Organisation from "./orgModel.js";
-import sequelize from "../db/index.js";
 
 if (!sequelize) {
   throw new Error("Sequelize instance is not available");
@@ -31,7 +31,7 @@ const UserOrganisation = sequelize.define(
       allowNull: false,
       references: {
         model: Organisation,
-        key: "userId",
+        key: "orgId",
       },
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
@@ -39,18 +39,22 @@ const UserOrganisation = sequelize.define(
   },
   {
     timestamps: true,
-    modelName: "UserOrganisation",
-    tableName: "user_organisations",
   },
 );
 
 User.belongsToMany(Organisation, {
   through: UserOrganisation,
+  foreignKey: "userId",
+  otherKey: "orgId",
+  as: "organisations",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
 Organisation.belongsToMany(User, {
   through: UserOrganisation,
+  foreignKey: "orgId",
+  otherKey: "userId",
+  as: "users",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });

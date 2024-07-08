@@ -13,8 +13,8 @@ export const verifyToken = async (
   try {
     const token =
       req.headers.authorization?.split(" ")[1] ||
-      req.query.token ||
-      req.cookies.token;
+      req.query?.token ||
+      req.cookies?.token;
 
     if (!token) {
       return res
@@ -31,5 +31,6 @@ export const verifyToken = async (
   } catch (error: any) {
     error.customMessage = "Authentication failed";
     error.statusCode = 401;
+    return next(error);
   }
 };

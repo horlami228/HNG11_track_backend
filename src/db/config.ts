@@ -46,10 +46,10 @@ const dbConfig: AppConfig = {
     charset: "utf8mb4",
   },
   production: {
-    url: process.env.PROD_DATABASE_URL || "", // Full connection URI
-    dialect: process.env.PROD_DATABASE_DIALECT || "", // Or another dialect according to your DB
-    protocol: process.env.PROD_DATABASE_PROTOCOL, // Database protocol
-    logging: false,
+    url: process.env.DATABASE_URL || "", // Full connection URI
+    dialect: process.env.DB_DIALECT || "", // Or another dialect according to your DB
+    protocol: process.env.DB_PROTOCOL, // Database protocol
+    logging: true,
     define: {
       timestamps: true,
     },

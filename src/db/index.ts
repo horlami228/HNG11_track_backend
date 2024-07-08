@@ -3,7 +3,7 @@ import dbConfig, { AppConfig, DatabaseConfig } from "./config.js";
 
 const env: keyof AppConfig =
   (process.env.NODE_ENV as keyof AppConfig) || "development";
-
+console.log("env here is", env);
 let sequelize: Sequelize | null = null;
 
 try {

@@ -4,9 +4,9 @@ import { Request, Response, NextFunction } from "express";
 // Define a type for joi schema
 type JoiSchema = Schema;
 
-const validate = (schema: JoiSchema) => {
+const validate = (schema: JoiSchema, property: "params" | "body" | "query") => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const { error, value } = schema.validate(req.body);
+    const { error, value } = schema.validate(req[property]);
     if (error) {
       // return res.status(422).json({ error: error.details[0].message });
       return res.status(422).json({
@@ -18,7 +18,7 @@ const validate = (schema: JoiSchema) => {
         ],
       });
     }
-    req.body = value; // Use the validated value
+    req[property] = value; // Use the validated value
     next();
   };
 };

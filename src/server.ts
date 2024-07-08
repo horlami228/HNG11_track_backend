@@ -3,6 +3,8 @@ import express from "express";
 import { Request, Response, NextFunction } from "express";
 import greetingRoute from "./routes/greetingRoute.js";
 import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+
 // import prisma from "./config/prismaClient.js";
 import sequelize from "./db/index.js";
 import User from "./models/userModel.js";
@@ -14,7 +16,7 @@ const PORT = process.env.PORT || 8000;
 // set default port or use provided PORT env variable
 
 //inititialize a new Express app
-const app = express();
+export const app = express();
 
 //Enable express to parse JSON data
 app.use(express.json());
@@ -50,9 +52,9 @@ sequelize
 //     .catch((err) => console.error("Error syncing database:", err));
 // }
 // Api endpoints here
-app.use("/api/", greetingRoute);
 
-app.use("/auth", userRoutes);
+app.use("/auth", authRoutes);
+app.use("/api", userRoutes);
 
 // 404 error handler middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
