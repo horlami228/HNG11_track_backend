@@ -1,9 +1,10 @@
 import { expect } from 'chai';
 import request from 'supertest';
-import {app} from "../server";
+import {app} from "../server.js";
 import jwt from 'jsonwebtoken';
-import User from '../models/userModel';
-import Organisation from '../models/orgModel';
+import User from '../models/userModel.js';
+import Organisation from '../models/orgModel.js';
+import "../config.js";
 
 describe('User Authentication & Organisation', () => {
 
@@ -118,7 +119,7 @@ describe('User Authentication & Organisation', () => {
 
   describe('Token Generation', () => {
     it('should contain correct user details and expiry time', async () => {
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded: any = jwt.verify(token, process.env.JWT_SECRET || "");
       expect(decoded).to.include({
         email: 'john.doe@example.com'
       });
